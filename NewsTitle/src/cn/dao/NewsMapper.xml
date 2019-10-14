@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.dao.NewsMapper">
+	<select id="selectAll" resultType="Detail">
+		select * from news_detail
+		<trim prefix="where" prefixOverrides="and | or">
+			<if test="title!=null and title!=''">
+				and title like CONCAT('%',#{title},'%')
+			</if>
+		</trim>
+		limit #{from},#{pageSize}
+	</select>
+	<select id="getDetailCount" resultType="int">
+		SELECT COUNT(*) FROM news_detail
+	</select>
+	<delete id="delectNews" parameterType="Detail">
+		DELETE FROM news_detail WHERE id=#{id} 
+	</delete>
+	<select id="selectComment" resultType="Comment">
+		SELECT c.* FROM news_comment AS c
+		INNER JOIN news_detail AS d ON c.newsid = d.id WHERE d.id=#{id}
+	</select>
+	<insert id="addComment" parameterType="Comment">
+		INSERT INTO news_comment(newsid,content,author)
+		VALUES (#{newsid},#{content},#{author})
+	</insert>
+
+</mapper>
